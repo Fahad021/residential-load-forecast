@@ -7,8 +7,7 @@ def loadResidentialData():
 
 
 def getUserData(data, userNo):
-    user_load = data[:, userNo]
-    return user_load
+    return data[:, userNo]
 
 
 if __name__ == "__main__":

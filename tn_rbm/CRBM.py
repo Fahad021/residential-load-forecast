@@ -8,8 +8,7 @@ from utils import *
 
 class CRBM(RBM):
     def propdown(self, h):
-        pre_activation = numpy.dot(h, self.W.T) + self.vbias
-        return pre_activation
+        return numpy.dot(h, self.W.T) + self.vbias
         
 
 
@@ -45,12 +44,8 @@ def test_crbm(learning_rate=0.1, k=1, training_epochs=1000):
     rbm = CRBM(input=data, n_visible=6, n_hidden=5, rng=rng)
 
     # train
-    for epoch in range(training_epochs):
+    for _ in range(training_epochs):
         rbm.contrastive_divergence(lr=learning_rate, k=k)
-        # cost = rbm.get_reconstruction_cross_entropy()
-        # print >> sys.stderr, 'Training epoch %d, cost is ' % epoch, cost
-
-
     # test
     v = numpy.array([[0.5, 0.5, 0., 0., 0., 0.],
                      [0., 0., 0., 0.5, 0.5, 0.]])

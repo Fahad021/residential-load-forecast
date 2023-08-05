@@ -15,33 +15,25 @@ def genData_W(load_weekday, temperature, humidity, pressure, n_train, n_valid, n
     max_load = np.max(load_weekday)
     min_load = np.min(load_weekday)
     load_weekday = (load_weekday - min_load) / (max_load - min_load)
-    
+
     ################## generate data ##########################################
     y_train = np.zeros((n_train, T))
     X_train = np.zeros((n_train, T * n_lag, 4))
-    
+
     y_valid = np.zeros((n_valid, T))
     X_valid = np.zeros((n_valid, T * n_lag, 4))
-    # training data
-    row = 0
-    for train_day in range(curr_day - n_train - n_valid, curr_day - n_valid):
+    for row, train_day in enumerate(range(curr_day - n_train - n_valid, curr_day - n_valid)):
         y_train[row,:] = load_weekday[train_day * T : train_day * T + T]
         X_train[row, :, 0] = load_weekday[train_day * T - n_lag * T: train_day * T]
         X_train[row, :, 1] = temperature[train_day * T - n_lag * T: train_day * T]
         X_train[row, :, 2] = humidity[train_day * T - n_lag * T: train_day * T]
         X_train[row, :, 3] = pressure[train_day * T - n_lag * T: train_day * T]
-        row += 1
-    
-    # validation data
-    row = 0
-    for valid_day in range(curr_day - n_valid, curr_day):
+    for row, valid_day in enumerate(range(curr_day - n_valid, curr_day)):
         y_valid[row,:] = load_weekday[valid_day * T : valid_day * T + T]
         X_valid[row, :, 0] = load_weekday[valid_day * T - n_lag * T: valid_day * T]
         X_valid[row, :, 1] = temperature[valid_day * T - n_lag * T: valid_day * T]
         X_valid[row, :, 2] = humidity[valid_day * T - n_lag * T: valid_day * T]
         X_valid[row, :, 3] = pressure[valid_day * T - n_lag * T: valid_day * T]
-        row += 1    
-        
     # test data
     X_test = np.zeros((1, T * n_lag, 4))
     X_test[0, :, 0] = load_weekday[curr_day*T - n_lag*T: curr_day*T]
@@ -49,8 +41,8 @@ def genData_W(load_weekday, temperature, humidity, pressure, n_train, n_valid, n
     X_test[0, :, 2] = humidity[curr_day*T - n_lag*T: curr_day*T]
     X_test[0, :, 3] = pressure[curr_day*T - n_lag*T: curr_day*T]
     y_test = load_weekday[curr_day*T: curr_day *T + T]
-    
-    
+
+
     return(X_train, y_train, X_valid, y_valid, X_test, y_test, min_load, max_load)
         
     

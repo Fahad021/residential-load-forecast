@@ -4,8 +4,7 @@ def genDailyCycle():
     d = np.array(range(24))
     d = np.tile(d, 365)
     d = d / (2 * np.pi)
-    d = np.cos(d)
-    return d
+    return np.cos(d)
 
 def genWeeklyCycle():
     d = np.array(range(24))
@@ -13,8 +12,7 @@ def genWeeklyCycle():
     w = np.tile(w, 52)
     w = np.concatenate((w, d), axis = 0)
     w = w / (2 * np.pi)
-    w = np.cos(w)
-    return w
+    return np.cos(w)
 
 def getCycles():
     d = genDailyCycle()

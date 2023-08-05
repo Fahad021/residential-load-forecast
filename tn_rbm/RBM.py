@@ -104,21 +104,21 @@ class RBM(object):
     def get_reconstruction_cross_entropy(self):
         pre_sigmoid_activation_h = numpy.dot(self.input, self.W) + self.hbias
         sigmoid_activation_h = sigmoid(pre_sigmoid_activation_h)
-        
+
         pre_sigmoid_activation_v = numpy.dot(sigmoid_activation_h, self.W.T) + self.vbias
         sigmoid_activation_v = sigmoid(pre_sigmoid_activation_v)
 
-        cross_entropy =  - numpy.mean(
-            numpy.sum(self.input * numpy.log(sigmoid_activation_v) +
-            (1 - self.input) * numpy.log(1 - sigmoid_activation_v),
-                      axis=1))
-        
-        return cross_entropy
+        return -numpy.mean(
+            numpy.sum(
+                self.input * numpy.log(sigmoid_activation_v)
+                + (1 - self.input) * numpy.log(1 - sigmoid_activation_v),
+                axis=1,
+            )
+        )
 
     def reconstruct(self, v):
         h = sigmoid(numpy.dot(v, self.W) + self.hbias)
-        reconstructed_v = sigmoid(numpy.dot(h, self.W.T) + self.vbias)
-        return reconstructed_v
+        return sigmoid(numpy.dot(h, self.W.T) + self.vbias)
 
 
 
@@ -139,12 +139,8 @@ def test_rbm(learning_rate=0.1, k=1, training_epochs=1000):
     rbm = RBM(input=data, n_visible=6, n_hidden=2, rng=rng)
 
     # train
-    for epoch in range(training_epochs):
+    for _ in range(training_epochs):
         rbm.contrastive_divergence(lr=learning_rate, k=k)
-        # cost = rbm.get_reconstruction_cross_entropy()
-        # print >> sys.stderr, 'Training epoch %d, cost is ' % epoch, cost
-
-
     # test
     v = numpy.array([[1, 1, 0, 0, 0, 0],
                      [0, 0, 0, 1, 1, 0]])

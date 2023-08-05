@@ -28,53 +28,52 @@ def NN_forecast(n_lag, T, X_train, y_train, X_test, y_test, maxLoad, minLoad):
     # stopping criteria
     epsilon = 1e-4
     last_l = 10000
-        
+
     ############################ TensorFlow ###################################    
     # place holders
     xs = tf.placeholder(tf.float32, [None, T * n_lag])
     ys = tf.placeholder(tf.float32, [None, T])
-    
+
     N_neuron = 50
     # hidden layers
     (l1, w1, b1) = add_layer(xs, T * n_lag, N_neuron, activation_function=tf.nn.relu)
     (l2, w2, b2) = add_layer(l1, N_neuron, N_neuron, activation_function=tf.nn.tanh)
-    
+
     # output layer
     (prediction, wo, bo) = add_layer(l2, N_neuron, T, None)
-    
+
     # loss function, RMSPE
     #loss = tf.reduce_mean(tf.reduce_sum(tf.square(ys - prediction), 1))  
     loss = T * tf.reduce_mean(tf.square(ys - prediction) )  
-    
+
     loss += 1e-1 * ( tf.nn.l2_loss(w1) + tf.nn.l2_loss(b1) + tf.nn.l2_loss(wo) + tf.nn.l2_loss(bo) )
     loss += 1e-1 * ( tf.nn.l2_loss(w2) + tf.nn.l2_loss(b2) )
-    
+
     # training step
     train_step = tf.train.AdamOptimizer().minimize(loss)
-    
+
     init = tf.global_variables_initializer()
     # run
     sess = tf.Session()
     # init.
-    
+
     training_size = 50
     MAPE_sum = 0
     RMSPE_sum = 0
     test_days = X_test.shape[0]
-    
+
     for d in range(test_days):
-        sess.run(init)  
+        sess.run(init)
         ################## training #########################################
         i = 0
         while (i < Max_iter):
             # training
             (t_step, l) = sess.run([train_step, loss], feed_dict={xs: X_train, ys: y_train})
-            if(abs(last_l - l) < epsilon):
+            if (abs(last_l - l) < epsilon):
                 break
-            else:
-                last_l = l
-                i = i+1
-                
+            last_l = l
+            i += 1
+
         ################## prediction #########################################
         X_test_d = np.zeros((1, n_lag * T))
         X_test_d[0,:] = X_test[d,:]
@@ -91,22 +90,22 @@ def NN_forecast(n_lag, T, X_train, y_train, X_test, y_test, maxLoad, minLoad):
 
         mape = predict_util.calMAPE(y_test_n, y_pred)
         rmspe = predict_util.calRMSPE(y_test_n, y_pred)
-        
+
         # update error metric results
         print('MAPE: %.2f, RMSPE: %.2f' % (mape, rmspe))
         MAPE_sum += mape
         RMSPE_sum += rmspe
-        
+
         # update training set
         X_train = np.concatenate((X_train, X_test_d), axis = 0)
         X_train = X_train[-training_size:, :]
         y_train = np.vstack([y_train, y_test_d])
         y_train = X_train[-training_size:, :]        
-        
+
     # close session
     tf.reset_default_graph() # reset the graph 
     sess.close() 
-    
+
     return (MAPE_sum / test_days, RMSPE_sum / test_days, test_days)
 
     

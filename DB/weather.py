@@ -12,10 +12,8 @@ def getWeather():
     # connection to DB
     conn = psycopg2.connect(dbname = "postgres", user = "j8mKmsbNAGqx", password = "zq7Hwitibx4O", host = "dataport.cloud", port = 5434)
     query = "SELECT * FROM university.weather WHERE localhour BETWEEN '01-01-2013' AND '01-01-2014' limit 8760"
-    
-    df = pd.read_sql_query(query, conn)
-    
-    return df
+
+    return pd.read_sql_query(query, conn)
 
 if __name__ == "__main__":
     

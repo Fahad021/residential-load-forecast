@@ -5,8 +5,7 @@ def genDailyCycle():
     d = np.tile(d, 365)
     ratio = 24 / (2 * np.pi)
     d = d / ratio
-    d = np.cos(d)
-    return d
+    return np.cos(d)
 
 def genWeeklyCycle():
     d = np.array(range(24))
@@ -15,8 +14,7 @@ def genWeeklyCycle():
     w = np.concatenate((w, d), axis = 0)
     ratio = 168 / (2 * np.pi)
     w = w / ratio
-    w = np.cos(w)
-    return w
+    return np.cos(w)
 
 def getCycles():
     d = genDailyCycle()
@@ -29,8 +27,7 @@ def genDailyCycle_15min():
     d = np.tile(d, 365)
     ratio = 96 / (2 * np.pi)
     d = d / ratio
-    d = np.cos(d)
-    return d
+    return np.cos(d)
 
 def genWeeklyCycle_15min():
     d = np.array(range(96))
@@ -39,8 +36,7 @@ def genWeeklyCycle_15min():
     w = np.concatenate((w, d), axis = 0)
     ratio = 672 / (2 * np.pi)
     w = w / ratio
-    w = np.cos(w)
-    return w
+    return np.cos(w)
 
 def getCycles_15min():
     d = genDailyCycle_15min()
